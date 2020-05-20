@@ -26,7 +26,7 @@ app.get('/usuario', function(req, res) {
 
 
 
-    Usuario.find({}, 'nombre email role estado img google')
+    Usuario.find({ estado: true }, 'nombre email role estado img google')
         .skip(desde)
         .limit(limite)
         .exec((err, usuarios) => {
@@ -38,7 +38,7 @@ app.get('/usuario', function(req, res) {
                 });
             }
 
-            Usuario.count({}, (err, conteo) => {
+            Usuario.count({ estado: true }, (err, conteo) => {
 
                 res.json({
                     ok: true,
@@ -115,9 +115,75 @@ app.put('/usuario/:id', function(req, res) {
 });
 
 //eliminar registos
-app.delete('/usuario', function(req, res) {
-    res.json('delete usuario')
+app.delete('/usuario/:id', function(req, res) {
+
+    let id = req.params.id;
+    let cambiaEstado = {
+        estado: false
+    };
+
+    Usuarios.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, usuarioBorrado) => {
+
+
+
+
+        // Cambiar estado a false ya que no se elimina registros si no se cambia el estado
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!usuarioBorrado) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: 'usuario no encontrado'
+                }
+            });
+        }
+        res.json({
+            ok: true,
+            usuario: usuarioBorrado
+        });
+
+
+    });
+
 });
+
+
+
+// Eliminar un registro de la base de datos
+// let id = req.params.id;
+
+// Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
+
+//     if (err) {
+//         return res.status(400).json({
+//             ok: false,
+//             err
+//         });
+//     };
+
+//     if (!usuarioBorrado) {
+//         return res.status(400).json({
+//             ok: false,
+//             err: {
+//                 message: 'usuario no encontrado'
+//             }
+//         });
+//     }
+//     res.json({
+//         ok: true,
+//         usuario: usuarioBorrado
+//     });
+
+
+// });
+
+//});
 
 
 module.exports = app;
