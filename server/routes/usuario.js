@@ -123,34 +123,31 @@ app.delete('/usuario/:id', [verificatoken, verificaadminrole], (req, res) => {
         estado: false
     };
 
-    Usuario.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, usuarioBorrado) => {
+    Usuario.findByIdAndUpdate(id, cambiaEstado, { new: true, runValidators: true, context: 'query' },
+        (err, usuarioBorrado) => {
+            // Cambiar estado a false ya que no se elimina registros si no se cambia el estado
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
 
-
-
-
-        // Cambiar estado a false ya que no se elimina registros si no se cambia el estado
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
+            if (!usuarioBorrado) {
+                return res.status(400).json({
+                    ok: false,
+                    err: {
+                        message: 'usuario no encontrado'
+                    }
+                });
+            }
+            res.json({
+                ok: true,
+                usuario: usuarioBorrado
             });
-        }
 
-        if (!usuarioBorrado) {
-            return res.status(400).json({
-                ok: false,
-                err: {
-                    message: 'usuario no encontrado'
-                }
-            });
-        }
-        res.json({
-            ok: true,
-            usuario: usuarioBorrado
+
         });
-
-
-    });
 
 });
 
