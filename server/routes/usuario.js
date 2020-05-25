@@ -9,9 +9,10 @@ const app = express();
 
 
 
+const { verificatoken, verificaadminrole } = require('../middlewares/autenticacion');
+const usuario = require('../models/usuario');
 
-
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificatoken, (req, res) => {
 
     let desde = req.query.desde || 0;
 
@@ -55,7 +56,7 @@ app.get('/usuario', function(req, res) {
 
 
 //ingresar registros
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificatoken, verificaadminrole], function(req, res) {
 
 
     let body = req.body;
@@ -90,7 +91,7 @@ app.post('/usuario', function(req, res) {
 
 
 //actualizar
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificatoken, verificaadminrole], function(req, res) {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -115,14 +116,14 @@ app.put('/usuario/:id', function(req, res) {
 });
 
 //eliminar registos
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificatoken, verificaadminrole], (req, res) => {
 
     let id = req.params.id;
     let cambiaEstado = {
         estado: false
     };
 
-    Usuarios.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, usuarioBorrado) => {
+    Usuario.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, usuarioBorrado) => {
 
 
 
