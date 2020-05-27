@@ -43,7 +43,7 @@ let usuarioSchema = new Schema({
     } //boolean
 });
 
-
+//excluir el password en las peticiones
 usuarioSchema.methods.toJSON = function() {
     let user = this;
     let userObject = user.toObject();
