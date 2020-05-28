@@ -149,7 +149,7 @@ app.post('/productos', verificatoken, (req, res) => {
                 err
             });
         }
-        if (productoDB) {
+        if (!productoDB) {
             return res.status(400).json({
                 ok: false,
                 err: {
