@@ -1,9 +1,0 @@
-HidxCountry 
-
-MEX 1
-COL 2
-ARG 3
-CHILE 4
-ECUADOR 5
-PERÚ 6
-GUATEMALA 7
